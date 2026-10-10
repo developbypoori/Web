@@ -22,4 +22,4 @@ Open `index.html` in a modern browser. Fonts use Google Fonts when online.
 The ANYMA RADIO button opens an embedded SoundCloud player for the Anyma profile (`soundcloud.com/anyma_ofc`). The player requests autoplay after the visitor opens it; browser and provider restrictions may still require pressing play. Audio streams from SoundCloud and is not downloaded or redistributed by the site.
 
 
-Music update: the player uses the locally bundled `assets/charlotte-de-witte.mp3` file provided for this build. Autoplay is attempted on page load; browsers may require a click on the music button or native Play control.
+Music update: the player uses the locally bundled `assets/charlotte-de-witte.mp3` file provided for this build. Playback starts at 00:20. Autoplay is attempted on page load; browsers may require a click on the music button or native Play control.

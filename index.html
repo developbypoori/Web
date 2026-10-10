@@ -186,17 +186,11 @@ section.content{padding:clamp(72px,9vw,120px) clamp(24px,8vw,120px)}
 }
 
 
-/* Music-only update: Anyma playlist drawer */
-.anyma-player{position:fixed;z-index:10000;right:22px;bottom:22px;width:min(370px,calc(100vw - 28px));padding:14px;border:1px solid rgba(165,106,255,.45);border-radius:18px;background:rgba(10,8,17,.96);box-shadow:0 20px 80px rgba(0,0,0,.55),0 0 35px rgba(132,45,255,.18);backdrop-filter:blur(24px);opacity:0;visibility:hidden;transform:translateY(18px) scale(.985);transition:opacity .25s ease,transform .25s ease,visibility .25s;overflow:hidden}
-.anyma-player.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
-.anyma-player-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 2px 12px}
-.anyma-player-head>div{display:flex;flex-direction:column;gap:5px;min-width:0}
-.anyma-player-head strong{font-size:11px;letter-spacing:.08em;color:#f1e9ff}
-.anyma-kicker{font:9px "DM Mono",monospace;letter-spacing:.18em;color:#b88aff}
-#closeAnymaPlayer{flex:0 0 30px;width:30px;height:30px;border:1px solid #a56aff55;border-radius:50%;background:#20112f;color:#fff;font-size:22px;line-height:1;cursor:pointer}
-.anyma-player iframe{display:block;border:0;border-radius:12px;max-width:100%;background:#100b18} .anyma-player audio{display:block;width:100%;height:48px;margin:8px 0;border-radius:12px;accent-color:#8b5cf6}
-.anyma-note{font-size:10px;line-height:1.6;color:#a99bbd;margin:10px 3px 2px}
-@media(max-width:620px){.anyma-player{right:14px;bottom:14px;width:calc(100vw - 28px);padding:12px}.anyma-player iframe{height:352px}.anyma-player-head strong{font-size:10px}}
+/* Compact header-only music control: no floating player or native audio UI */
+#dpMusicAudio{display:none!important}
+.sound{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.sound.playing{background:rgba(142,57,255,.24);border-color:#d0a9ff;box-shadow:0 0 22px #8e39ff35}
+.sound:focus-visible{outline:2px solid #d0a9ff;outline-offset:4px}
 
 </style>
 </head>
@@ -205,7 +199,7 @@ section.content{padding:clamp(72px,9vw,120px) clamp(24px,8vw,120px)}
 <header class="topbar">
   <a class="brand magnetic" href="#top" aria-label="DP home"><img src="assets/dp-logo-transparent.png" alt="DP logo"><span>DP<small>® / DIGITAL STUDIO</small></span></a>
   <nav class="nav"><a href="#services">Services</a><a href="#work">Selected work</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
-  <div class="top-right"><span class="status mono"><i class="dot"></i> AVAILABLE FOR PROJECTS</span><button class="sound" id="soundBtn" aria-label="Play music" aria-expanded="false"><span class="equalizer"><i></i><i></i><i></i><i></i></span><span id="soundLabel">PLAY MUSIC</span></button></div>
+  <div class="top-right"><span class="status mono"><i class="dot"></i> AVAILABLE FOR PROJECTS</span><button class="sound" id="soundBtn" type="button" aria-label="Play music" aria-pressed="false"><span class="equalizer"><i></i><i></i><i></i><i></i></span><span id="soundLabel">PLAY MUSIC</span></button></div>
 </header>
 <main id="top">
 <section class="hero">
@@ -244,74 +238,56 @@ section.content{padding:clamp(72px,9vw,120px) clamp(24px,8vw,120px)}
 <section class="contact" id="contact"><div class="kicker mono">04 / YOUR MOVE</div><div class="mono" style="color:#9c91b2">HAVE A GOOD ONE IN MIND?</div><h2>LET’S MAKE<br><span>IT REAL.</span></h2><div class="contact-row"><div><p style="color:#b9afca;font-size:13px;line-height:1.8;max-width:370px">Have a project, a wild idea, or just want to talk design? My inbox is open.</p><a class="cta magnetic" href="mailto:developbypoori@gmail.com">START A CONVERSATION <span>↗</span></a></div><div class="contact-links"><a href="https://t.me/developbypoori" target="_blank" rel="noreferrer">TELEGRAM ↗</a><a href="https://instagram.com/developbypoori" target="_blank" rel="noreferrer">INSTAGRAM ↗</a><a href="https://github.com/developbypoori" target="_blank" rel="noreferrer">GITHUB ↗</a><a href="mailto:developbypoori@gmail.com">EMAIL ↗</a></div></div></section>
 </main>
 <footer class="footer mono"><span>© 2026 <b>DP® — DEVELOP BY POORI</b></span><span>DESIGNED WITH INTENT. BUILT WITH CURIOSITY.</span><a href="#top">BACK TO TOP ↑</a></footer>
-<div class="toast" id="toast">Anyma · Melodic Techno</div>
-<div class="anyma-player" id="anymaPlayer" aria-hidden="true">
-  <div class="anyma-player-head">
-    <div><span class="anyma-kicker">DP SOUND SYSTEM</span><strong>CHARLOTTE DE WITTE · THE HEADS THAT KNOW</strong></div>
-    <button type="button" id="closeAnymaPlayer" aria-label="Close music player">×</button>
-  </div>
-  <audio id="dpMusicAudio" controls preload="auto" playsinline>
-    <source src="assets/charlotte-de-witte.mp3" type="audio/mpeg">
-    Your browser does not support audio playback.
-  </audio>
-  <p class="anyma-note">Local audio · Use the player controls. Autoplay is attempted when supported by your browser.</p>
-</div>
+<audio id="dpMusicAudio" preload="metadata" playsinline>
+  <source src="assets/charlotte-de-witte.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 const cursor=document.getElementById('cursor');
 if(matchMedia('(pointer:fine)').matches && innerWidth>620){document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px'});document.querySelectorAll('a,button,.service,.work-card').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('big'));el.addEventListener('mouseleave',()=>cursor.classList.remove('big'))})}
 document.querySelectorAll('.magnetic').forEach(el=>{el.addEventListener('mousemove',e=>{if(innerWidth<800)return;const r=el.getBoundingClientRect();el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.09}px,${(e.clientY-r.top-r.height/2)*.12}px)`});el.addEventListener('mouseleave',()=>el.style.transform='')});
-// Local MP3 player: attempt autoplay, and reliably start from the music button click.
+// Header-only music toggle: click once to play, click again to pause.
 const soundButton=document.getElementById('soundBtn');
-const anymaPlayer=document.getElementById('anymaPlayer');
-const closeAnymaPlayer=document.getElementById('closeAnymaPlayer');
 const dpMusicAudio=document.getElementById('dpMusicAudio');
 const soundLabel=document.getElementById('soundLabel');
+let musicStartedAt20=false;
 function updateMusicUI(isPlaying){
- if(soundButton)soundButton.classList.toggle('playing',isPlaying);
- if(soundLabel)soundLabel.textContent=isPlaying?'NOW PLAYING':'PLAY MUSIC';
- if(document.body)document.body.classList.toggle('playing',isPlaying);
+  if(soundButton){
+    soundButton.classList.toggle('playing',isPlaying);
+    soundButton.setAttribute('aria-pressed',String(isPlaying));
+    soundButton.setAttribute('aria-label',isPlaying?'Pause music':'Play music');
+  }
+  if(soundLabel)soundLabel.textContent=isPlaying?'PAUSE MUSIC':'PLAY MUSIC';
+  document.body.classList.toggle('playing',isPlaying);
 }
-function openAnymaPlayer(tryPlay=true){
- if(!anymaPlayer||!soundButton)return;
- anymaPlayer.classList.add('open');
- anymaPlayer.setAttribute('aria-hidden','false');
- soundButton.setAttribute('aria-expanded','true');
- if(soundLabel)soundLabel.textContent='PLAY MUSIC';
- if(tryPlay&&dpMusicAudio){
-   const p=dpMusicAudio.play();
-   if(p&&typeof p.catch==='function')p.catch(()=>updateMusicUI(false));
- }
-}
-function closeAnyma(){
- if(!anymaPlayer||!soundButton)return;
- anymaPlayer.classList.remove('open');
- anymaPlayer.setAttribute('aria-hidden','true');
- soundButton.setAttribute('aria-expanded','false');
- if(dpMusicAudio)dpMusicAudio.pause();
- updateMusicUI(false);
- if(soundLabel)soundLabel.textContent='PLAY MUSIC';
+function playMusic(){
+  if(!dpMusicAudio)return;
+  const begin=()=>{
+    if(!musicStartedAt20){
+      try{dpMusicAudio.currentTime=20;musicStartedAt20=true;}catch(e){}
+    }
+    const result=dpMusicAudio.play();
+    if(result&&typeof result.catch==='function')result.catch(()=>updateMusicUI(false));
+  };
+  if(dpMusicAudio.readyState>=1)begin();
+  else dpMusicAudio.addEventListener('loadedmetadata',begin,{once:true});
 }
 if(dpMusicAudio){
- dpMusicAudio.addEventListener('play',()=>updateMusicUI(true));
- dpMusicAudio.addEventListener('pause',()=>updateMusicUI(false));
- dpMusicAudio.addEventListener('ended',()=>updateMusicUI(false));
+  dpMusicAudio.addEventListener('play',()=>updateMusicUI(true));
+  dpMusicAudio.addEventListener('pause',()=>updateMusicUI(false));
+  dpMusicAudio.addEventListener('ended',()=>updateMusicUI(false));
 }
 if(soundButton)soundButton.addEventListener('click',()=>{
- if(anymaPlayer&&anymaPlayer.classList.contains('open')){
-   if(dpMusicAudio&&!dpMusicAudio.paused)dpMusicAudio.pause();
-   else if(dpMusicAudio){const p=dpMusicAudio.play();if(p&&p.catch)p.catch(()=>{});}
- }else openAnymaPlayer(true);
+  if(!dpMusicAudio)return;
+  if(!dpMusicAudio.paused)dpMusicAudio.pause();
+  else playMusic();
 });
-if(closeAnymaPlayer)closeAnymaPlayer.addEventListener('click',closeAnyma);
 document.addEventListener('keydown',e=>{
- if(e.key==='Escape')closeAnyma();
- if(e.key.toLowerCase()==='m'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
-  if(anymaPlayer&&anymaPlayer.classList.contains('open'))closeAnyma();else openAnymaPlayer(true);
- }
+  if(e.key.toLowerCase()==='m'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
+    if(dpMusicAudio&&!dpMusicAudio.paused)dpMusicAudio.pause();else playMusic();
+  }
 });
-// Try autoplay on page load; browsers may block it until a user gesture.
-if(dpMusicAudio){const attempt=dpMusicAudio.play();if(attempt&&attempt.catch)attempt.catch(()=>updateMusicUI(false));}
+// Audio starts only after the visitor clicks; browsers commonly block sound autoplay.
 document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>{const target=document.querySelector(a.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth'})}));
 </script>
 </body></html>
